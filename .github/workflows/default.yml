@@ -50,8 +50,8 @@ jobs:
         - name: release
           uses: marvinpinto/action-automatic-releases@latest
           with:
-            title: Continuous ${{ needs.build.outputs.sha_short }}
-            automatic_release_tag: ${{ needs.build.outputs.sha_short }}
+            title: Continuous ${{ needs.build.outputs.ssha }}
+            automatic_release_tag: ${{ needs.build.outputs.ssha }}
             prerelease: false
             draft: false
             files: |
