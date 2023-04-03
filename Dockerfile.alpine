@@ -1,0 +1,20 @@
+FROM alpine:latest
+
+
+# Install deps
+RUN apk update && apk upgrade
+RUN apk add --no-cache build-base libarchive-dev talloc-dev uthash-dev git libbsd-dev py3-pip git patchelf
+RUN git clone https://github.com/ruanformigoni/proot.git
+
+WORKDIR proot
+
+# Compile
+RUN mkdir -p dist
+
+RUN make -C src loader.elf loader-m32.elf build.h
+RUN make -C src proot
+
+# Create static binary
+RUN pip3 install wheel scons
+RUN pip3 install staticx
+RUN staticx src/proot dist/proot
