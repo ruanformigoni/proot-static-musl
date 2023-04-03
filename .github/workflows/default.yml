@@ -31,10 +31,10 @@ jobs:
     - name: Compute Short SHA
       id: ssha
       run: |
-        echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "ssha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     outputs:
-      git_ssha: ${{ steps.ssha.outputs.sha_short }}
+      ssha: ${{ steps.ssha.outputs.ssha }}
 
 
   release:
