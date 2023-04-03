@@ -34,6 +34,11 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
+        - name: Compute Short SHA
+          id: ssha
+          run: |
+            echo "SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
         - uses: actions/download-artifact@v1
           with:
             name: proot
@@ -41,8 +46,8 @@ jobs:
         - name: release
           uses: marvinpinto/action-automatic-releases@latest
           with:
-            title: Continuous ${{ github.sha | slice(0, 7) }}
-            automatic_release_tag: ${{ github.sha | slice(0, 7) }}
+            title: Continuous ${{ steps.ssha.outputs.SHA_SHORT }}
+            automatic_release_tag: ${{ steps.ssha.outputs.SHA_SHORT }}
             prerelease: false
             draft: false
             files: |
