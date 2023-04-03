@@ -28,6 +28,15 @@ jobs:
         name: proot
         path: 'dist'
 
+    - name: Compute Short SHA
+      id: ssha
+      run: |
+        echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+    outputs:
+      git_ssha: ${{ steps.ssha.outputs.sha_short }}
+
+
   release:
       permissions: write-all
       needs: [build]
@@ -38,16 +47,11 @@ jobs:
           with:
             name: proot
 
-        - name: Compute Short SHA
-          id: ssha
-          run: |
-            echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
         - name: release
           uses: marvinpinto/action-automatic-releases@latest
           with:
-            title: Continuous ${{ env.sha_short }}
-            automatic_release_tag: ${{ env.sha_short }}
+            title: Continuous ${{ needs.build.outputs.sha_short }}
+            automatic_release_tag: ${{ needs.build.outputs.sha_short }}
             prerelease: false
             draft: false
             files: |
