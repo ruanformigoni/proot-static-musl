@@ -3,18 +3,31 @@ FROM alpine:latest
 
 # Install deps
 RUN apk update && apk upgrade
-RUN apk add --no-cache build-base libarchive-dev talloc-dev uthash-dev git libbsd-dev py3-pip git patchelf
-RUN git clone https://github.com/ruanformigoni/proot.git
+RUN apk add --no-cache wget build-base libarchive-dev talloc talloc-dev \
+  uthash-dev git libbsd-dev py3-pip python3-dev git patchelf
 
+# Fetch source
+# RUN mkdir proot
+# COPY . proot
+# WORKDIR proot
+RUN git clone https://github.com/ruanformigoni/proot.git
 WORKDIR proot
 
 # Compile
-RUN mkdir -p dist
-
+## Fetch talloc
+ENV PKG talloc-2.4.0.tar.gz
+RUN mkdir -p talloc && wget -O "talloc/$PKG" "https://samba.org/ftp/talloc/$PKG"
+RUN cd talloc && tar xf "$PKG" && mv "${PKG%.tar.gz}" talloc && rm "$PKG"
+## Compile talloc
+WORKDIR talloc/talloc
+RUN ./configure
+RUN make -j2
+RUN mkdir -p ../libtalloc && ar qf ../libtalloc/libtalloc.a bin/default/talloc.c*.o
+## Compile proot
+WORKDIR /proot
 RUN make -C src loader.elf loader-m32.elf build.h
 RUN make -C src proot
 
-# Create static binary
-RUN pip3 install wheel scons
-RUN pip3 install staticx
-RUN staticx src/proot dist/proot
+# Copy static binary
+RUN mkdir -p dist
+RUN cp src/proot dist/proot
