@@ -246,6 +246,11 @@ static void new_bindings(Tracee *tracee, const char *bindings[], const char *val
 			? expand_front_variable(tracee->ctx, bindings[i])
 			: value);
 
+		if ( access(path, F_OK) != 0 ) {
+			note(tracee, WARNING, USER, "Ignoring binding %s -- not found", path);
+			continue;
+		}
+
 		new_binding(tracee, path, NULL, false);
 	}
 }
