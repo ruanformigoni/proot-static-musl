@@ -20,7 +20,7 @@ static const char *recommended_bindings[] = {
 	"/etc/group",
 	"/etc/nsswitch.conf",
 	"/etc/resolv.conf",
-	"/etc/localtime",
+	// "/etc/localtime",
 	"/dev/",
 	"/sys/",
 	"/proc/",
