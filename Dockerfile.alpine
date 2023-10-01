@@ -25,7 +25,6 @@ RUN make -j2
 RUN mkdir -p ../libtalloc && ar qf ../libtalloc/libtalloc.a bin/default/talloc.c*.o
 ## Compile proot
 WORKDIR /proot
-RUN make -C src loader.elf loader-m32.elf build.h
 RUN make -C src proot
 
 # Copy static binary

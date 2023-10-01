@@ -10,19 +10,25 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
 
-    - name: Compile and extract the artifact from docker container
+    - name: Compile and extract artifacts from docker container
       run: |
         mkdir -p dist
-        docker build -t alpine:proot -f Dockerfile.alpine .
-        docker run --rm -v $(pwd):/workdir alpine:proot cp /proot/dist/proot /workdir/dist/proot
+
+        for arch in x86_64 aarch64; do
+          docker build --platform "${arch}" -t alpine:proot -f Dockerfile.alpine .
+          docker run --rm --platform "${arch}" -v $(pwd):/workdir alpine:proot cp /proot/dist/proot "/workdir/dist/proot-${arch}"
+        done
 
     - name: Set permissions for dist directory
       run: |
         sudo chown -R "$(id -u)":"$(id -g)" dist/
         sudo chmod -R 766 dist/
 
-    - name: Upload artifact to release
+    - name: Upload artifacts to release
       uses: actions/upload-artifact@v1.0.0
       with:
         name: proot
