@@ -4,7 +4,7 @@ FROM alpine:latest
 # Install deps
 RUN apk update && apk upgrade
 RUN apk add --no-cache wget build-base libarchive-dev talloc talloc-dev \
-  uthash-dev git libbsd-dev py3-pip python3-dev git patchelf
+  uthash-dev git libbsd-dev py3-pip python3-dev git patchelf upx
 
 # Fetch source
 # RUN mkdir proot
@@ -30,3 +30,9 @@ RUN make -C src proot
 # Copy static binary
 RUN mkdir -p dist
 RUN cp src/proot dist/proot
+
+# Strip
+RUN strip -s -R .comment -R .gnu.version --strip-unneeded dist/proot
+
+# Compress
+RUN upx --ultra-brute --no-lzma dist/proot
