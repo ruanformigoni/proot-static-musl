@@ -61,5 +61,5 @@ jobs:
             prerelease: false
             draft: false
             files: |
-              proot
+              *proot*
             repo_token: ${{ secrets.GITHUB_TOKEN }}
